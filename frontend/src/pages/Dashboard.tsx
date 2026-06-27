@@ -32,20 +32,18 @@ export default function Dashboard() {
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {kpis.map((kpi, idx) => (
-          <Grid size={{ xs: 12, sm: 6, md: 2.4 }} key={idx}>
-            <Card>
-              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar sx={{ bgcolor: kpi.color, width: 48, height: 48 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }} key={idx}>
+            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', p: 2.5, flexGrow: 1 }}>
+                <Avatar sx={{ bgcolor: kpi.color, width: 44, height: 44, mb: 1.5 }}>
                   {kpi.icon}
                 </Avatar>
-                <Box>
-                  <Typography variant="body2" color="text.secondary">
-                    {kpi.title}
-                  </Typography>
-                  <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                    {kpi.value}
-                  </Typography>
-                </Box>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.82rem', fontWeight: 500, minHeight: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {kpi.title}
+                </Typography>
+                <Typography variant="h5" sx={{ fontWeight: 700, mt: 1 }}>
+                  {kpi.value}
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
