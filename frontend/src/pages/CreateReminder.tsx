@@ -50,9 +50,18 @@ export default function CreateReminder() {
     setLoading(true);
     setErrorMsg(null);
     try {
+      let isoTime: string | undefined = undefined;
+      if (formData.time) {
+        const d = new Date(formData.time);
+        if (isNaN(d.getTime())) {
+          throw new Error('Please select a valid date and time.');
+        }
+        isoTime = d.toISOString();
+      }
+
       const res = await workflowService.executeWorkflow({
         ...formData,
-        time: formData.time ? new Date(formData.time).toISOString() : undefined
+        time: isoTime
       });
       // Redirect to explorer with highlight state
       setTimeout(() => {
