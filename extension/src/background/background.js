@@ -46,7 +46,7 @@ async function checkPendingNotifications() {
       for (const notif of data.notifications) {
         chrome.notifications.create({
           type: "basic",
-          iconUrl: "../../assets/icon.png",
+          iconUrl: "assets/icon.png",
           title: notif.title || "ReminderAds Alert",
           message: notif.message,
           priority: 2
