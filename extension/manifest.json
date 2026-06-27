@@ -1,18 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "ReminderAds",
+  "name": "ReminderAds Extension",
   "version": "1.0",
-  "description": "Context-based reminders",
+  "description": "Context-based tab and activity tracking for ReminderAds",
   "background": {
     "service_worker": "src/background/background.js"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/content/content.js"]
-    }
+  "permissions": [
+    "tabs",
+    "idle",
+    "notifications",
+    "alarms"
   ],
-  "action": {
-    "default_popup": "src/popup/popup.html"
-  }
+  "host_permissions": [
+    "http://localhost:8001/*"
+  ]
 }
