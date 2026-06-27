@@ -1,3 +1,4 @@
+import { parseUtcDate } from '../services/workflow.service';
 import { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, Chip } from '@mui/material';
@@ -55,7 +56,7 @@ export default function Monitor() {
                         </TableCell>
                         <TableCell>{a.executionCount}</TableCell>
                         <TableCell>{a.avgRuntimeMs.toFixed(1)}ms</TableCell>
-                        <TableCell>{a.lastExecuted ? new Date(a.lastExecuted).toLocaleTimeString() : 'N/A'}</TableCell>
+                        <TableCell>{a.lastExecuted ? parseUtcDate(a.lastExecuted).toLocaleTimeString() : 'N/A'}</TableCell>
                         <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <ToggleOn sx={{ color: '#4caf50' }} />
@@ -100,7 +101,7 @@ export default function Monitor() {
                         </TableCell>
                         <TableCell>{t.invocationCount}</TableCell>
                         <TableCell>{t.avgTimeMs.toFixed(1)}ms</TableCell>
-                        <TableCell>{t.lastInvocation ? new Date(t.lastInvocation).toLocaleTimeString() : 'N/A'}</TableCell>
+                        <TableCell>{t.lastInvocation ? parseUtcDate(t.lastInvocation).toLocaleTimeString() : 'N/A'}</TableCell>
                         <TableCell>
                           <Chip label={t.status} color="primary" size="small" variant="outlined" />
                         </TableCell>

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import { Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, InputAdornment, Box, Collapse, IconButton, Stepper, Step, StepLabel } from '@mui/material';
 import { Search as SearchIcon, KeyboardArrowDown, KeyboardArrowUp, CheckCircleOutlined, ErrorOutlined } from '@mui/icons-material';
-import { workflowService } from '../services/workflow.service';
+import { workflowService, parseUtcDate } from '../services/workflow.service';
 import { logService } from '../services/log.service';
 
 export default function WorkflowExplorer() {
@@ -91,7 +91,7 @@ export default function WorkflowExplorer() {
                               {w.decision?.recommended_action || 'Pending'}
                             </TableCell>
                             <TableCell>{w.metadata.workflow_status}</TableCell>
-                            <TableCell>{new Date(w.metadata.created_at).toLocaleTimeString()}</TableCell>
+                            <TableCell>{parseUtcDate(w.metadata.created_at).toLocaleTimeString()}</TableCell>
                           </TableRow>
                           <TableRow>
                             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -198,7 +198,7 @@ export default function WorkflowExplorer() {
                             {log.agent}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {new Date(log.timestamp).toLocaleTimeString()}
+                            {parseUtcDate(log.timestamp).toLocaleTimeString()}
                           </Typography>
                         </Box>
                         <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>

@@ -1,7 +1,7 @@
 import Grid from '@mui/material/Grid';
 import { Typography, Card, CardContent, Box, Avatar } from '@mui/material';
 import { AccessTime, PlayArrow, CheckCircle, Memory, Security, ToggleOn } from '@mui/icons-material';
-import { workflowService } from '../services/workflow.service';
+import { workflowService, parseUtcDate } from '../services/workflow.service';
 import { agentService } from '../services/agent.service';
 import { toolService } from '../services/tool.service';
 
@@ -97,7 +97,7 @@ export default function Dashboard() {
                         {w.reminder.title}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {new Date(w.metadata.created_at).toLocaleTimeString()}
+                        {parseUtcDate(w.metadata.created_at).toLocaleTimeString()}
                       </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -1,4 +1,4 @@
-import { workflowService } from './workflow.service';
+import { workflowService, parseUtcDate } from './workflow.service';
 
 export interface AgentStat {
   name: string;
@@ -24,7 +24,7 @@ export const agentService = {
         if (statsMap[h.agent_name]) {
           statsMap[h.agent_name].count += 1;
           statsMap[h.agent_name].totalTime += h.processing_time_ms || 0;
-          if (!statsMap[h.agent_name].lastExec || new Date(h.started_at) > new Date(statsMap[h.agent_name].lastExec!)) {
+          if (!statsMap[h.agent_name].lastExec || parseUtcDate(h.started_at) > parseUtcDate(statsMap[h.agent_name].lastExec!)) {
             statsMap[h.agent_name].lastExec = h.started_at;
           }
         }

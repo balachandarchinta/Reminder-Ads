@@ -1,4 +1,4 @@
-import { workflowService } from './workflow.service';
+import { workflowService, parseUtcDate } from './workflow.service';
 
 export interface ToolStat {
   name: string;
@@ -28,7 +28,7 @@ export const toolService = {
           if (statsMap[t.tool_name]) {
             statsMap[t.tool_name].count += 1;
             statsMap[t.tool_name].totalTime += t.execution_time_ms;
-            if (!statsMap[t.tool_name].lastInv || new Date(t.timestamp) > new Date(statsMap[t.tool_name].lastInv!)) {
+            if (!statsMap[t.tool_name].lastInv || parseUtcDate(t.timestamp) > parseUtcDate(statsMap[t.tool_name].lastInv!)) {
               statsMap[t.tool_name].lastInv = t.timestamp;
             }
           }

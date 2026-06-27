@@ -1,4 +1,4 @@
-import { workflowService } from './workflow.service';
+import { workflowService, parseUtcDate } from './workflow.service';
 
 export interface LogRow {
   timestamp: string;
@@ -75,6 +75,6 @@ export const logService = {
       }
     });
 
-    return logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    return logs.sort((a, b) => parseUtcDate(b.timestamp).getTime() - parseUtcDate(a.timestamp).getTime());
   }
 };
