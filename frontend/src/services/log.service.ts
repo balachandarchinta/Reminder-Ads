@@ -57,7 +57,7 @@ export const logService = {
             workflowId: wId,
             agent: h.agent_name,
             message: `Agent ${h.agent_name} completed processing.`,
-            duration: h.processing_time_ms,
+            duration: h.processing_time_ms ?? undefined,
             status: h.status,
           });
         }

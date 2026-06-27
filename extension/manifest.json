@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "ReminderAds Extension",
-  "version": "1.0",
-  "description": "Context-based tab and activity tracking for ReminderAds",
+  "version": "1.1",
+  "description": "Real-time tab and activity tracking for ReminderAds",
   "background": {
     "service_worker": "src/background/background.js"
   },
@@ -13,6 +13,10 @@
     "alarms"
   ],
   "host_permissions": [
-    "http://localhost:8001/*"
-  ]
+    "http://localhost:8001/*",
+    "http://127.0.0.1:8001/*"
+  ],
+  "action": {
+    "default_popup": "src/popup/popup.html"
+  }
 }

@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:8001/api/v1";
+const BACKEND_URL = "http://127.0.0.1:8001/api/v1";
 
 // Push latest tab/activity state to backend
 async function updateActivityState() {
@@ -66,14 +66,20 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-// Alarm for periodic pushes and polls
-chrome.alarms.create("extension_pulse", { periodInMinutes: 0.05 }); // run every ~3 seconds (lowest alarm frequency allowed)
+// Alarm for periodic pushes and polls (clamped to 1 minute in Chrome, but runs faster in unpack dev)
+chrome.alarms.create("extension_pulse", { periodInMinutes: 0.1 });
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "extension_pulse") {
     updateActivityState();
     checkPendingNotifications();
   }
 });
+
+// Run a local interval as well to poll fast (every 3 seconds) when service worker is awake
+setInterval(() => {
+  updateActivityState();
+  checkPendingNotifications();
+}, 3000);
 
 // Run immediate checks on service worker start
 updateActivityState();

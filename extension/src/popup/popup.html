@@ -1,10 +1,62 @@
-<!-- Popup HTML for ReminderAds Chrome extension -->
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ReminderAds</title>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 250px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0f0c1b;
+      color: #fff;
+      padding: 16px;
+      margin: 0;
+    }
+    h3 {
+      margin-top: 0;
+      color: #9c27b0;
+      font-size: 1.1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 8px;
+    }
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.85rem;
+    }
+    .label {
+      color: #aaa;
+    }
+    .value {
+      font-weight: 600;
+      text-align: right;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .status-ok {
+      color: #4caf50;
+    }
+    .status-err {
+      color: #f44336;
+    }
+  </style>
 </head>
 <body>
+  <h3>ReminderAds Status</h3>
+  <div class="status-item">
+    <span class="label">Backend connection:</span>
+    <span class="value status-err" id="backend-status">Checking...</span>
+  </div>
+  <div class="status-item">
+    <span class="label">Active Tab:</span>
+    <span class="value" id="active-tab">None</span>
+  </div>
+  <div class="status-item">
+    <span class="label">Idle Status:</span>
+    <span class="value status-ok" id="idle-status">Active</span>
+  </div>
   <script src="popup.js"></script>
 </body>
 </html>
