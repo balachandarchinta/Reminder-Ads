@@ -1,0 +1,4 @@
+# Generated from pyproject.toml
+fastapi
+uvicorn
+firebase-admin

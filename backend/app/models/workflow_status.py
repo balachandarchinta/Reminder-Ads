@@ -1,0 +1,14 @@
+"""
+Workflow Status enum.
+"""
+from enum import Enum
+
+class WorkflowStatus(str, Enum):
+    CREATED = "CREATED"
+    VALIDATED = "VALIDATED"
+    ACTIVITY_ANALYZED = "ACTIVITY_ANALYZED"
+    LEARNING_ANALYZED = "LEARNING_ANALYZED"
+    SCHEDULED = "SCHEDULED"
+    DECISION_READY = "DECISION_READY"
+    DELIVERED = "DELIVERED"
+    FAILED = "FAILED"

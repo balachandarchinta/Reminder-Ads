@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "ReminderAds",
+  "version": "1.0",
+  "description": "Context-based reminders",
+  "background": {
+    "service_worker": "src/background/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup/popup.html"
+  }
+}

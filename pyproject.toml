@@ -1,0 +1,12 @@
+[project]
+name = "reminderads"
+version = "0.1.0"
+description = "ReminderAds Foundation"
+authors = [{name = "Google ADK Architect"}]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "firebase-admin",
+]
