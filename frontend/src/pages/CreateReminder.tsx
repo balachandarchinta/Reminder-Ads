@@ -60,7 +60,7 @@ export default function CreateReminder() {
       }, 500);
     } catch (err: any) {
       console.error(err);
-      setErrorMsg('Failed to execute agent workflow. Check if backend is running on http://localhost:8000.');
+      setErrorMsg(`Failed to execute agent workflow. Check if backend is running on http://localhost:8001. Details: ${err.message || err}`);
       setLoading(false);
     }
   };
