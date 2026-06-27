@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
-import { Typography, Card, CardContent, TextField, Button, Box, MenuItem, CircularProgress, Stepper, Step, StepLabel, Chip } from '@mui/material';
-import { Send, CheckCircleOutlined } from '@mui/icons-material';
+import { Typography, Card, CardContent, TextField, Button, Box, MenuItem, CircularProgress, Stepper, Step, StepLabel, Alert } from '@mui/material';
+import { Send } from '@mui/icons-material';
 import { workflowService } from '../services/workflow.service';
-import type { WorkflowContext } from '../services/workflow.service';
 
 export default function CreateReminder() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -16,19 +17,50 @@ export default function CreateReminder() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<WorkflowContext | null>(null);
+  const [activeStep, setActiveStep] = useState(0);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const steps = [
+    { label: 'Reminder Manager Agent', desc: 'Validating input and initializing context' },
+    { label: 'Activity Agent', desc: 'Querying browser MCP tools for user digital state' },
+    { label: 'Decision Agent', desc: 'Applying routing rules and executing notification tools' }
+  ];
+
+  // Simulate loading steps during backend call
+  useEffect(() => {
+    let timer1: number;
+    let timer2: number;
+    if (loading) {
+      setActiveStep(0);
+      timer1 = window.setTimeout(() => {
+        setActiveStep(1);
+      }, 1000);
+      timer2 = window.setTimeout(() => {
+        setActiveStep(2);
+      }, 2000);
+    }
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, [loading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setResult(null);
+    setErrorMsg(null);
     try {
-      const res = await workflowService.executeWorkflow(formData);
-      setResult(res);
-    } catch (err) {
+      const res = await workflowService.executeWorkflow({
+        ...formData,
+        time: formData.time ? new Date(formData.time).toISOString() : undefined
+      });
+      // Redirect to explorer with highlight state
+      setTimeout(() => {
+        navigate('/explorer', { state: { highlightWorkflowId: res.metadata.workflow_id } });
+      }, 500);
+    } catch (err: any) {
       console.error(err);
-      alert('Failed to connect to FastAPI backend. Ensure it is running locally on port 8000.');
-    } finally {
+      setErrorMsg('Failed to execute agent workflow. Check if backend is running on http://localhost:8000.');
       setLoading(false);
     }
   };
@@ -36,7 +68,7 @@ export default function CreateReminder() {
   return (
     <Box>
       <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
-        Contextual Reminder Sandbox
+        Create Contextual Reminder
       </Typography>
 
       <Grid container spacing={4}>
@@ -45,13 +77,21 @@ export default function CreateReminder() {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom color="primary">
-                New Reminder Request
+                New Reminder Details
               </Typography>
+              
+              {errorMsg && (
+                <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }} onClose={() => setErrorMsg(null)}>
+                  {errorMsg}
+                </Alert>
+              )}
+
               <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 3 }}>
                 <TextField
                   label="Title"
                   required
                   fullWidth
+                  disabled={loading}
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 />
@@ -60,13 +100,24 @@ export default function CreateReminder() {
                   fullWidth
                   multiline
                   rows={3}
+                  disabled={loading}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                />
+                <TextField
+                  label="Fixed Reminder Time (Optional)"
+                  type="datetime-local"
+                  fullWidth
+                  disabled={loading}
+                  slotProps={{ inputLabel: { shrink: true } }}
+                  value={formData.time}
+                  onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                 />
                 <TextField
                   select
                   label="Priority"
                   fullWidth
+                  disabled={loading}
                   value={formData.priority}
                   onChange={(e) => setFormData({ ...formData, priority: Number(e.target.value) })}
                 >
@@ -77,6 +128,7 @@ export default function CreateReminder() {
                   select
                   label="Category"
                   fullWidth
+                  disabled={loading}
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 >
@@ -92,112 +144,48 @@ export default function CreateReminder() {
                   endIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Send />}
                   sx={{ py: 1.5, background: 'linear-gradient(45deg, #9c27b0, #2196f3)' }}
                 >
-                  Execute Agent Workflow
+                  {loading ? 'Running Agents...' : 'Execute Agent Workflow'}
                 </Button>
               </Box>
             </CardContent>
           </Card>
         </Grid>
 
-        {/* Live Execution & Decision Column */}
+        {/* Live Loading Stepper Column */}
         <Grid size={{ xs: 12, md: 7 }}>
-          {loading && (
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', py: 8 }}>
-              <CircularProgress size={60} color="primary" sx={{ mb: 3 }} />
-              <Typography variant="h6">Orchestrating AI Agents...</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Invoking Browser Tool & Preferences via MCP Tool Registry
-              </Typography>
+          {loading ? (
+            <Card sx={{ height: '100%', py: 6, px: 4 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>
+                <CircularProgress size={50} color="primary" sx={{ mb: 2 }} />
+                <Typography variant="h6">Orchestrating Multi-Agent Pipeline</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Updating shared, immutable WorkflowContext
+                </Typography>
+              </Box>
+              <Stepper activeStep={activeStep} orientation="vertical">
+                {steps.map((step, index) => (
+                  <Step key={step.label}>
+                    <StepLabel>
+                      <Typography sx={{ fontWeight: activeStep === index ? 700 : 500 }}>
+                        {step.label} {activeStep === index && '(Running...)'}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {step.desc}
+                      </Typography>
+                    </StepLabel>
+                  </Step>
+                ))}
+              </Stepper>
             </Card>
-          )}
-
-          {!loading && !result && (
+          ) : (
             <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', py: 8, borderStyle: 'dashed' }}>
               <Typography variant="h6" color="text.secondary">
                 Awaiting Workflow Trigger
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Fill out the form and submit to witness the live agent routing pipeline.
+                Fill out the form and submit to witness the live agent pipeline execution.
               </Typography>
             </Card>
-          )}
-
-          {!loading && result && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              {/* Agent Timeline */}
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom color="secondary">
-                    AI Execution Pipeline
-                  </Typography>
-                  <Stepper orientation="vertical" sx={{ mt: 3 }}>
-                    <Step active completed>
-                      <StepLabel>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Reminder Manager Agent</Typography>
-                          <Chip label="SUCCESS" color="success" size="small" />
-                        </Box>
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                          Initialized WorkflowContext. Routed next step to Activity Agent.
-                        </Typography>
-                      </StepLabel>
-                    </Step>
-                    <Step active completed>
-                      <StepLabel>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Activity Agent</Typography>
-                          <Chip label="SUCCESS" color="success" size="small" />
-                        </Box>
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                          Invoked MCP Browser tools: website = "{result.activity?.website}", idle = {String(result.activity?.idle)}.
-                        </Typography>
-                      </StepLabel>
-                    </Step>
-                    <Step active completed>
-                      <StepLabel>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Decision Agent</Typography>
-                          <Chip label="SUCCESS" color="success" size="small" />
-                        </Box>
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                          Invoked preference tools. Decided on delivery action and triggered alert.
-                        </Typography>
-                      </StepLabel>
-                    </Step>
-                  </Stepper>
-                </CardContent>
-              </Card>
-
-              {/* Decision Card */}
-              <Card sx={{ background: 'linear-gradient(135deg, #1a1a3c 0%, #2b1b54 100%)', border: '2px solid rgba(156, 39, 176, 0.4)' }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#e040fb' }}>
-                    <CheckCircleOutlined />
-                    Final Reminder Decision
-                  </Typography>
-                  <Grid container spacing={2} sx={{ mt: 2 }}>
-                    <Grid size={{ xs: 6 }}>
-                      <Typography variant="caption" color="text.secondary">Action</Typography>
-                      <Typography variant="body1" sx={{ fontWeight: 700, textTransform: 'uppercase', color: result.decision?.deliver_now ? '#4caf50' : '#ff9800' }}>
-                        {result.decision?.recommended_action}
-                      </Typography>
-                    </Grid>
-                    <Grid size={{ xs: 6 }}>
-                      <Typography variant="caption" color="text.secondary">Deliver Now</Typography>
-                      <Typography variant="body1" sx={{ fontWeight: 700 }}>
-                        {String(result.decision?.deliver_now)}
-                      </Typography>
-                    </Grid>
-                    <Grid size={{ xs: 12 }}>
-                      <Typography variant="caption" color="text.secondary">Reasoning Explanation</Typography>
-                      <Typography variant="body2" sx={{ fontStyle: 'italic', bgcolor: 'rgba(0,0,0,0.2)', p: 1.5, borderRadius: 2, border: '1px solid rgba(255,255,255,0.05)', mt: 0.5 }}>
-                        {result.decision?.reason}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Box>
           )}
         </Grid>
       </Grid>
